@@ -16,15 +16,16 @@ from utils.connect_to_table import connectTable
 '''
 
 
-def match_v1_v2_id(msg, begin, end):
+def match_v1_v2_id( begin, end, msg):
     coll = connectTable("oga_one", "mag_paper_plus2")
     coll3 = connectTable('qiuzh', "MAG_authors")
     opt = []
     count = 0
-    # for i in coll3.find()[begin: end]:
-    for i in coll3.find().limit(2):
+    cursor = coll3.find(no_cursor_timeout=True)[begin:end]
+    for i in cursor:
+    # for i in coll3.find():
         v2author_id = i.get("id")
-        print(v2author_id)
+        # print(v2author_id)
         new_pubs = []
         papers = coll.find({"new_authors.id": v2author_id})
         for paper in papers:
@@ -33,20 +34,57 @@ def match_v1_v2_id(msg, begin, end):
         opt.append(pymongo.UpdateOne({"id": v2author_id},
                                      {"$set": {"new_pubs": new_pubs}}
                                      ))
-
+    cursor.close()
     coll3.bulk_write(opt, ordered=False)
     print("线程： %s, 遍历了 %s" % (msg, len(opt)))
 
 
 if __name__ == "__main__":
+    # start = time()
+    # pool = multiprocessing.Pool(processes=1)
+    # for i in range(1):
+    #     msg = "process %d" % (i)
+    #     pool.apply_async(match_v1_v2_id, (msg, 44133 * i, 44133 * (i + 1)))
+    # pool.close()
+    # pool.join()
+    # print("--------Sub-process all done.-----------")
+    # end = time()
+    # print("main process run time: %s" % (end - start))
     start = time()
-    pool = multiprocessing.Pool(processes=1)
-    for i in range(1):
-        msg = "process %d" % (i)
-        pool.apply_async(match_v1_v2_id, (msg, 44133 * i, 44133 * (i + 1)))
-    pool.close()
-    pool.join()
-    print("--------Sub-process all done.-----------")
+
+    p1 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 0, 441324 * 0 + 441324, 1))
+    p2 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 1, 441324 * 1 + 441324, 2))
+    p3 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 2, 441324 * 2 + 441324, 3))
+    p4 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 3, 441324 * 3 + 441324, 4))
+    p5 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 4, 441324 * 4 + 441324, 5))
+    p6 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 5, 441324 * 5 + 441324, 6))
+    p7 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 6, 441324 * 6 + 441324, 7))
+    p8 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 7, 441324 * 7 + 441324, 8))
+    p9 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 8, 441324 * 8 + 441324, 9))
+    p10 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 9, 441324 * 9 + 441324, 10))
+
+    p1.start()
+    p2.start()
+    p3.start()
+    p4.start()
+    p5.start()
+    p6.start()
+    p7.start()
+    p8.start()
+    p9.start()
+    p10.start()
+
+    p1.join()
+    p2.join()
+    p3.join()
+    p4.join()
+    p5.join()
+    p6.join()
+    p7.join()
+    p8.join()
+    p9.join()
+    p10.join()
+
     end = time()
-    print("main process run time: %s" % (end - start))
+    print("run time: %s" % (end - start))
 
