@@ -79,13 +79,39 @@ def researchers_con():
     cursor.close()
 
 
-def researchers_con_innewcollection():
+def researchers_con_innewcollection(begin,end,msg):
 
     '''
     this function aim to find the co-author number in the new collection, i.e. for researcher i, only one of his coauthor
     in the same collection will be regarded as coauthor.
     :return:
     '''
+
+    colpaper = connectTable("qiuzh", "mag_papers0510")
+    col_author = connectTable("qiuzh", "mag_researchers0707")
+
+    count = 0
+    operation = []
+    cursor = col_author.find(no_cursor_timeout=True)[begin:end]
+    for author in cursor:
+        count += 1
+        author_id = author["_id"]
+        coauthor_number = 0
+        for paper in author["new_pubs"]:
+            p = colpaper.find_one({"_id": paper["pid"]}, no_cursor_timeout=True)
+            coauthor_number += (len(p["authors"]) - 1)
+
+        operation.append(pymongo.UpdateOne({"_id": author_id}, {"$set": {"con": coauthor_number}}))
+
+        if count % 10000 == 0:
+            print(msg, "已处理:", count / 10000, flush=True)
+            col_author.bulk_write(operation, ordered=False)
+            print(msg, "已写入:", count / 10000, flush=True)
+            operation = []
+            print(time(), flush=True)
+    if operation:
+        col_author.bulk_write(operation, ordered=False)
+    cursor.close()
 
 
 if __name__ == '__main__':
