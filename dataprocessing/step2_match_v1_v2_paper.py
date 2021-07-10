@@ -17,23 +17,26 @@ from utils.connect_to_table import connectTable
 
 
 def match_v1_v2_id( begin, end, msg):
-    coll = connectTable("oga_one", "mag_paper_plus2")
-    coll3 = connectTable('qiuzh', "MAG_authors")
+    coll = connectTable("qiuzh", "mag_papers")
+    coll3 = connectTable('qiuzh', "mag_authors0409")
     opt = []
-    count = 0
+    count=0
     cursor = coll3.find(no_cursor_timeout=True)[begin:end]
     for i in cursor:
-    # for i in coll3.find():
-        v2author_id = i.get("id")
+        if count % 100000 == 0:
+            print("线程： %s, 已完成 %s 万条" % (msg, count / 100000),flush=True)
+        count += 1
+        v2author_id = i.get("_id")
         # print(v2author_id)
         new_pubs = []
-        papers = coll.find({"new_authors.id": v2author_id})
+        papers = coll.find({"authors.id": v2author_id})
         for paper in papers:
-            id = paper.get("id")
+            id = paper.get("_id")
             new_pubs.append(id)
-        opt.append(pymongo.UpdateOne({"id": v2author_id},
+        opt.append(pymongo.UpdateOne({"_id": v2author_id},
                                      {"$set": {"new_pubs": new_pubs}}
                                      ))
+
     cursor.close()
     coll3.bulk_write(opt, ordered=False)
     print("线程： %s, 遍历了 %s" % (msg, len(opt)))
@@ -52,16 +55,16 @@ if __name__ == "__main__":
     # print("main process run time: %s" % (end - start))
     start = time()
 
-    p1 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 0, 441324 * 0 + 441324, 1))
-    p2 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 1, 441324 * 1 + 441324, 2))
-    p3 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 2, 441324 * 2 + 441324, 3))
-    p4 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 3, 441324 * 3 + 441324, 4))
-    p5 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 4, 441324 * 4 + 441324, 5))
-    p6 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 5, 441324 * 5 + 441324, 6))
-    p7 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 6, 441324 * 6 + 441324, 7))
-    p8 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 7, 441324 * 7 + 441324, 8))
-    p9 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 8, 441324 * 8 + 441324, 9))
-    p10 = multiprocessing.Process(target=match_v1_v2_id, args=(441324 * 9, 441324 * 9 + 441324, 10))
+    p1 = multiprocessing.Process(target=match_v1_v2_id, args=(25314431 * 0, 25314431 * 0 + 25314431, 1))
+    p2 = multiprocessing.Process(target=match_v1_v2_id, args=(25314431 * 1, 25314431 * 1 + 25314431, 2))
+    p3 = multiprocessing.Process(target=match_v1_v2_id, args=(25314431 * 2, 25314431 * 2 + 25314431, 3))
+    p4 = multiprocessing.Process(target=match_v1_v2_id, args=(25314431 * 3, 25314431 * 3 + 25314431, 4))
+    p5 = multiprocessing.Process(target=match_v1_v2_id, args=(25314431 * 4, 25314431 * 4 + 25314431, 5))
+    p6 = multiprocessing.Process(target=match_v1_v2_id, args=(25314431 * 5, 25314431 * 5 + 25314431, 6))
+    p7 = multiprocessing.Process(target=match_v1_v2_id, args=(25314431 * 6, 25314431 * 6 + 25314431, 7))
+    p8 = multiprocessing.Process(target=match_v1_v2_id, args=(25314431 * 7, 25314431 * 7 + 25314431, 8))
+    p9 = multiprocessing.Process(target=match_v1_v2_id, args=(25314431 * 8, 25314431 * 8 + 25314431, 9))
+    p10 = multiprocessing.Process(target=match_v1_v2_id, args=(25314431 * 9, 25314431 * 9 + 25314431, 10))
 
     p1.start()
     p2.start()

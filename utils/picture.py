@@ -1,7 +1,15 @@
 import matplotlib.pyplot as plt
 import math
+import numpy as np
+
+from utils.connect_to_table import connectTable
+
 
 def draw_picture():
+    '''
+    this is a picture template from wenlong
+    :return:
+    '''
     font2 = {'family': 'Times New Roman',
              'weight': 'normal',
              'size': 10,
@@ -14,7 +22,7 @@ def draw_picture():
                 '5': [2705, 1814, 1217, 1065, 909, 631, 588, 495, 416, 488],
                 '6': [16732, 10357, 7021, 5898, 5178, 3807, 3423, 3088, 2622, 3187]}
     for k, content in contents.items():
-        title = get_area_name(k)
+        title = "nicai"
         k = int(k) - 1
         ax1 = ax[int(k / 3)][k % 3]
         ax1.set_title(title)
@@ -73,3 +81,287 @@ def draw_picture():
     plt.subplots_adjust(wspace=0.9, hspace=0.3)
     plt.savefig("3-distributionOfFirstL1PaperLocation(fields).png", dpi=600)
     plt.show()
+
+
+def distribution_di():
+    '''
+    the distribution of di
+    :return:
+    '''
+
+    DI = []
+    with open("Discoverer.txt","r") as f:
+        for line in f:
+            DI.append(int(line))
+    plt.rc('font', family='times new roman')
+    X = [x for x in range(1,len(DI)+1)]
+    DI.sort(reverse=True)
+    fig = plt.figure()
+    ax = fig.add_subplot(1,1,1)
+    plt.xlabel("${i}$", fontsize='16')
+    plt.ylabel("${d_i}$", fontsize='16')
+
+    ax.scatter(X, DI, s=8, c='c', alpha=0.5)
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    plt.xlim(10**-1, 10 ** 8)
+    plt.ylim(10**-1, 10 ** 6)
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/dis_di.png", dpi=600, bbox_inches="tight")
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/dis_di.pdf", dpi=600, bbox_inches="tight")
+    plt.show()
+    print("图1 ok")
+
+
+def distribution_Si():
+    '''
+    the distribution of di
+    :return:
+    '''
+
+    DI = []
+    with open("Surprisal.txt","r") as f:
+        for line in f:
+            DI.append(float(line))
+    plt.rc('font', family='times new roman')
+    X = [x for x in range(1,len(DI)+1)]
+    DI.sort(reverse=True)
+    fig = plt.figure()
+    ax = fig.add_subplot(1,1,1)
+    plt.xlabel("${i}$", fontsize='16')
+    plt.ylabel("${S_i}$", fontsize='16')
+
+    ax.scatter(X, DI, s=8, c='c', alpha=0.5)
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    plt.xlim(10**0, 10 ** 8)
+    plt.ylim(10**-8, 10 ** 4)
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/dis_Si.png", dpi=600, bbox_inches="tight")
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/dis_Si.pdf", dpi=600, bbox_inches="tight")
+    plt.show()
+    print("图1 ok")
+
+
+def correlation_di_ki_ci_si():
+    '''
+    the correlation between d_i(discovery_times) with k_i(coauthor times)
+    s_i(surprisal) and c_i(citation counts)
+    :return:
+    '''
+    col1 = connectTable('qiuzh', "mag_authors0510")
+    DI = []
+    KI = []
+    SI = []
+    CI = []
+    for author in col1.find():
+        d_i = author["dn"]
+        k_i = author["con"]
+        s_i = author["sur"]
+        c_i = author["cn"]
+        DI.append(d_i)
+        KI.append(k_i)
+        SI.append(s_i)
+        CI.append(c_i)
+
+    print("data loaded successfully")
+    plt.rc('font', family='times new roman')
+    fig = plt.figure()
+    ax = fig.add_subplot(1,1,1)
+    plt.xlabel("${d_i}$", fontsize='16')
+    plt.ylabel("${k_i}$", fontsize='16')
+    ax.scatter(DI, KI, s=8, c='c', alpha=0.5)
+    # plt.xlim(10 ** -1, 10 ** 5)
+    # plt.ylim(10 ** -3, 10 ** 3)
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/di_ki.png", dpi=600, bbox_inches="tight")
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/di_ki.pdf", dpi=600, bbox_inches="tight")
+
+    print("图1 ok")
+    correlation = np.corrcoef(DI, KI)
+    print("d_i,k_i",correlation)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    plt.xlabel("${d_i}$", fontsize='16')
+    plt.ylabel("${c_i}$", fontsize='16')
+    ax.scatter(DI, CI, s=8, c='c', alpha=0.5)
+    # plt.xlim(10 ** -1, 10 ** 5)
+    # plt.ylim(10 ** -3, 10 ** 3)
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/di_ci.png", dpi=600, bbox_inches="tight")
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/di_ci.pdf", dpi=600, bbox_inches="tight")
+
+    print("图2 ok")
+    correlation = np.corrcoef(DI, CI)
+    print("d_i,c_i", correlation)
+
+
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    plt.xlabel("${S_i}$", fontsize='16')
+    plt.ylabel("${k_i}$", fontsize='16')
+    ax.scatter(SI, KI, s=8, c='c', alpha=0.5)
+    # plt.xlim(10 ** -1, 10 ** 5)
+    # plt.ylim(10 ** -3, 10 ** 3)
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/si_ki.png", dpi=600, bbox_inches="tight")
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/si_ki.pdf", dpi=600, bbox_inches="tight")
+
+    print("图3 ok")
+    correlation = np.corrcoef(SI, KI)
+    print("SI,KI", correlation)
+
+
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    plt.xlabel("${S_i}$", fontsize='16')
+    plt.ylabel("${c_i}$", fontsize='16')
+    ax.scatter(SI, CI, s=8, c='c', alpha=0.5)
+    # plt.xlim(10 ** -1, 10 ** 5)
+    # plt.ylim(10 ** -3, 10 ** 3)
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/si_ci.png", dpi=600, bbox_inches="tight")
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/si_ci.pdf", dpi=600, bbox_inches="tight")
+
+    print("图4 ok")
+    correlation = np.corrcoef(SI, CI)
+    print("s_i,c_i", correlation)
+
+
+def correlation_di_ki_ci_si2():
+    '''
+    the correlation between d_i(discovery_times) with k_i(coauthor times)
+    s_i(surprisal) and c_i(citation counts)
+    this function is created in 2021.7.1, we save the list in the PC to save time
+    :return:
+    '''
+
+    DI = []
+    KI = []
+    SI = []
+    CI = []
+    with open("Discoverer.txt","r") as f:
+        for line in f:
+            DI.append(int(line))
+    with open("Coauthor.txt","r") as f:
+        for line in f:
+            KI.append(int(line))
+
+    with open("Surprisal.txt","r") as f:
+        for line in f:
+            SI.append(float(line))
+
+    with open("Citation.txt", "r") as f:
+        for line in f:
+            CI.append(int(line))
+    print("data loaded successfully",len(DI),len(KI))
+    plt.rc('font', family='times new roman')
+    # fig = plt.figure()
+    # ax = fig.add_subplot(1,1,1)
+    # plt.xlabel("${k_i}$", fontsize='16')
+    # plt.ylabel("${d_i}$", fontsize='16')
+    # ax.scatter(KI, DI, s=8, c='c', alpha=0.5)
+    # plt.xlim(10**-1, 10 ** 6)
+    # plt.ylim(10**-1, 10 ** 6)
+    # ax.set_xscale("log")
+    # ax.set_yscale("log")
+    # plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/di_ki.png", dpi=600, bbox_inches="tight")
+    # plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/di_ki.pdf", dpi=600, bbox_inches="tight")
+    # plt.show()
+    # print("图1 ok")
+    # correlation = np.corrcoef(DI, KI)
+    # print("d_i,k_i",correlation)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    plt.xlabel("${d_i}$", fontsize='16')
+    plt.ylabel("${c_i}$", fontsize='16')
+    ax.scatter(DI, CI, s=8, c='c', alpha=0.5)
+    # plt.xlim(10 ** -1, 10 ** 5)
+    # plt.ylim(10 ** -3, 10 ** 3)
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/di_ci.png", dpi=600, bbox_inches="tight")
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/di_ci.pdf", dpi=600, bbox_inches="tight")
+
+    print("图2 ok")
+    correlation = np.corrcoef(DI, CI)
+    print("d_i,c_i", correlation)
+
+
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    plt.xlabel("${S_i}$", fontsize='16')
+    plt.ylabel("${k_i}$", fontsize='16')
+    ax.scatter(SI, KI, s=8, c='c', alpha=0.5)
+    # plt.xlim(10 ** -1, 10 ** 5)
+    # plt.ylim(10 ** -3, 10 ** 3)
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/si_ki.png", dpi=600, bbox_inches="tight")
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/si_ki.pdf", dpi=600, bbox_inches="tight")
+
+    print("图3 ok")
+    correlation = np.corrcoef(SI, KI)
+    print("SI,KI", correlation)
+
+
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    plt.xlabel("${S_i}$", fontsize='16')
+    plt.ylabel("${c_i}$", fontsize='16')
+    ax.scatter(SI, CI, s=8, c='c', alpha=0.5)
+    # plt.xlim(10 ** -1, 10 ** 5)
+    # plt.ylim(10 ** -3, 10 ** 3)
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/si_ci.png", dpi=600, bbox_inches="tight")
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/si_ci.pdf", dpi=600, bbox_inches="tight")
+
+    print("图4 ok")
+    correlation = np.corrcoef(SI, CI)
+    print("s_i,c_i", correlation)
+
+
+def surprisal_bootstrapsurprisal():
+    S = []
+    with open("Surprisal.txt","r") as f:
+        for line in f:
+            S.append(float(line))
+
+    BS = []
+    with open("Bsur.txt","r") as f:
+        for line in f:
+            BS.append(float(line))
+
+    plt.rc('font', family='times new roman')
+    X = [x for x in range(1,len(S)+1)]
+    S.sort(reverse=True)
+    BS.sort(reverse=True)
+    fig = plt.figure()
+    ax = fig.add_subplot(1,1,1)
+    plt.xlabel("${i}$", fontsize='16')
+    plt.ylabel("${S_i}$", fontsize='16')
+
+    print(len(S))
+    print(len(BS))
+
+    plt.ylim(10 ** -8, 10 ** 4)
+    ax.loglog(X, S, c='purple', label='Realdata', linewidth=5)
+    ax.loglog(X, BS, '--', c='orange', label='Bootstrap',linewidth=5)
+
+    plt.xlabel('$i$', fontsize='16')
+    plt.ylabel('$S_i$', fontsize='16')
+    plt.legend(fontsize='20')
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/S_BS.png", dpi=600, bbox_inches="tight")
+    plt.savefig("C:/Users/qzh/PycharmProjects/MAG/figure/S_BS.pdf", dpi=600, bbox_inches="tight")
+    plt.show()
+    print("图1 ok")
+
+
+if __name__ == '__main__':
+    distribution_Si()
+

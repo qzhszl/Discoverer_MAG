@@ -1,8 +1,12 @@
 # encoding="utf-8"
 import json
 
-from utils.utils_ import get_academic_table
+from utils.connect_to_table import connectTable
 
+
+def get_academic_table(a):
+    coll = connectTable("academic", a)
+    return coll
 
 # 地学 381 21
 # 地学天文 59 9
