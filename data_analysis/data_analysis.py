@@ -130,11 +130,11 @@ def author_citation_number_patch():
 
 def author_coauthor_number(begin,end,msg):
     '''
-    this function is appropriate for mag_authors0510 and citation network0515
+    this function is appropriate for mag_authors0510 and  mag_papers0510
     :return:
     '''
     colpaper = connectTable("qiuzh", "mag_papers0510")
-    col_author = connectTable("qiuzh", "mag_researchers0707")
+    col_author = connectTable("qiuzh", "mag_authors0510")
 
     count = 0
     operation = []

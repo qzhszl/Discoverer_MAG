@@ -8,6 +8,9 @@ a researchers -- they may have only one publication the whole life. And some of 
 against the conventional meaning of cooperation. Therefore, we want to filter the data further more.
 We use function in the dataprocessing/step1
 '''
+import multiprocessing
+from time import time
+
 import pymongo
 
 from utils.connect_to_table import connectTable
@@ -52,10 +55,14 @@ We got 1082922 researchers
 then we go back to data_analysis.py to calculate con,dn,and to
 step 1--3 to identify discoverers
 '''
-#con
+# con：coauthor_number
 
 
 def researchers_con():
+    '''
+    the coauthor times based on the mag_authors0510
+    :return:
+    '''
     col1 = connectTable('qiuzh', "mag_authors0510")
     col2 = connectTable('qiuzh', "mag_researchers0707")
     count = 0
@@ -84,6 +91,7 @@ def researchers_con_innewcollection(begin,end,msg):
     '''
     this function aim to find the co-author number in the new collection, i.e. for researcher i, only one of his coauthor
     in the same collection will be regarded as coauthor.
+    i.e. The coauthor relationship in mag_researchers0707 is different from the one in the mag_authors0510.
     :return:
     '''
 
@@ -101,7 +109,7 @@ def researchers_con_innewcollection(begin,end,msg):
             p = colpaper.find_one({"_id": paper["pid"]}, no_cursor_timeout=True)
             coauthor_number += (len(p["authors"]) - 1)
 
-        operation.append(pymongo.UpdateOne({"_id": author_id}, {"$set": {"con": coauthor_number}}))
+        operation.append(pymongo.UpdateOne({"_id": author_id}, {"$set": {"new_con": coauthor_number}}))
 
         if count % 10000 == 0:
             print(msg, "已处理:", count / 10000, flush=True)
@@ -115,6 +123,33 @@ def researchers_con_innewcollection(begin,end,msg):
 
 
 if __name__ == '__main__':
-    researchers_con()
+    start = time()
+
+    p1 = multiprocessing.Process(target=researchers_con_innewcollection,
+                                 args=(5401421 * 0, 5401421 * 0 + 5401421, 1))
+    p2 = multiprocessing.Process(target=researchers_con_innewcollection,
+                                 args=(5401421 * 1, 5401421 * 1 + 5401421, 2))
+    p3 = multiprocessing.Process(target=researchers_con_innewcollection,
+                                 args=(5401421 * 2, 5401421 * 2 + 5401421, 3))
+    p4 = multiprocessing.Process(target=researchers_con_innewcollection,
+                                 args=(5401421 * 3, 5401421 * 3 + 5401421, 4))
+    p5 = multiprocessing.Process(target=researchers_con_innewcollection,
+                                 args=(5401421 * 4, 5401421 * 4 + 5401421, 5))
+
+    p1.start()
+    p2.start()
+    p3.start()
+    p4.start()
+    p5.start()
+
+    p1.join()
+    p2.join()
+    p3.join()
+    p4.join()
+    p5.join()
+
+    end = time()
+    print("run time: %s" % ((end - start)/60))
+
 
 
