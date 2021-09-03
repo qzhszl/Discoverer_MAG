@@ -1,0 +1,7 @@
+In this document, we present all the documents in mongodb and their characters.
+
+mag_researchers0810:
+pubs>=10, academic career life >=10, paper in "new_pubs" has no more than 10 authors
+the "pn" and "cn" is calculated based on "mag_researchers0707"
+
+be discovered0812:

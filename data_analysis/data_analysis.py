@@ -231,12 +231,13 @@ def author_be_discovered(begin, end, msg):
     this function is appropriate for mag_authors0510 and citation network0515
     authors are discovered by who
     2700636 top researchers in total
-    relationships are saved in the
+    relationships are saved in the be_discovered0622
     :return:
+    this function is used in 2021.8.12 to get be_discovered0812
     '''
     colpaper = connectTable("qiuzh", "mag_papers0510")
-    col_author = connectTable("qiuzh", "mag_authors0510")
-    col_be_discovered = connectTable("qiuzh", "be_discovered0622")
+    col_author = connectTable("qiuzh", "mag_researchers0810")
+    col_be_discovered = connectTable("qiuzh", "be_discovered0812")
 
     count = 0
     operation = []
@@ -273,12 +274,16 @@ def author_be_discovered(begin, end, msg):
             print(time(), flush=True)
     if operation:
         col_be_discovered.bulk_write(operation, ordered=False)
-    print(msg,count)
+    print(msg, count)
     cursor.close()
 
 
 def initialize_discover_number():
-    col_author = connectTable("qiuzh", "mag_authors0510")
+    '''
+    this function is used in 2021.8.12 in mag_researchers0810
+    :return:
+    '''
+    col_author = connectTable("qiuzh", "mag_researchers0810")
 
     cursor = col_author.find(no_cursor_timeout=True)
     # researcher_number = cursor.count()
@@ -307,10 +312,11 @@ def author_discover_number(begin, end, msg):
     this function is appropriate for mag_authors0510 and be_discovered0521
     How many times do an author discover others in his career life.
     :return:
+    this function is used in 2021.8.12 in mag_researchers0810
     '''
 
-    col_author = connectTable("qiuzh", "mag_authors0510")
-    col_be_discovered = connectTable("qiuzh", "be_discovered0622")
+    col_author = connectTable("qiuzh", "mag_researchers0810")
+    col_be_discovered = connectTable("qiuzh", "be_discovered0812")
 
     count = 0
     operation = []
@@ -382,17 +388,17 @@ def author_pubs_number():
 if __name__ == '__main__':
     # initialize_discover_number()
     start = time()
-
+    #
     p1 = multiprocessing.Process(target=author_discover_number,
-                                 args=(5401421 * 0, 5401421 * 0 + 5401421, 1))
+                                 args=(216585 * 0, 216585 * 0 + 216585, 1))
     p2 = multiprocessing.Process(target=author_discover_number,
-                                 args=(5401421 * 1, 5401421 * 1 + 5401421, 2))
+                                 args=(216585 * 1, 216585 * 1 + 216585, 2))
     p3 = multiprocessing.Process(target=author_discover_number,
-                                 args=(5401421 * 2, 5401421 * 2 + 5401421, 3))
+                                 args=(216585 * 2, 216585 * 2 + 216585, 3))
     p4 = multiprocessing.Process(target=author_discover_number,
-                                 args=(5401421 * 3, 5401421 * 3 + 5401421, 4))
+                                 args=(216585 * 3, 216585 * 3 + 216585, 4))
     p5 = multiprocessing.Process(target=author_discover_number,
-                                 args=(5401421 * 4, 5401421 * 4 + 5401421, 5))
+                                 args=(216585 * 4, 216585 * 4 + 216585, 5))
 
     p1.start()
     p2.start()

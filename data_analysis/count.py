@@ -58,12 +58,12 @@ def author_surprisal_count():
     author_pubs_count
     :return:
     '''
-    coll = connectTable("qiuzh", "mag_authors0510")
+    coll = connectTable("qiuzh", "researchers0810_trainingset")
     # coll = connectTable("qiuzh", "test1")
     a = coll.aggregate([{"$group": {"_id": {},
-                                    "avg": {"$avg": "$sur"},
-                                    "max": {"$max": "$sur"},
-                                    "min": {"$min": "$sur"}
+                                    "avg": {"$avg": "$bsur"},
+                                    "max": {"$max": "$bsur"},
+                                    "min": {"$min": "$bsur"}
                                     }}])
     for i in a:
         print(i)

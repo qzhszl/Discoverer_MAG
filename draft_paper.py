@@ -126,16 +126,18 @@ __author__ = "ZHIHAO QIU"
 
 
 
-col_author = connectTable("qiuzh", "mag_researchers0707")
-
-# cursor_count = col_author.count_documents({"dn":-1})
-# print(cursor_count)
+col_author = connectTable("qiuzh", "mag_researchers0810")
+cursor_count = col_author.count_documents({"iftop":1})
+cursor_count2 = col_author.count_documents({"ifdis":1,"iftop":1})
+cursor_count3 = col_author.count_documents({"ifdis":1})
+cursor_count4 = col_author.count_documents({"ifdis":1,"iftop":0})
+print(cursor_count,cursor_count2,cursor_count3,cursor_count4)
+# #
+# # cursor_count = col_author.find({"bsur":{"$exists":False}}, no_cursor_timeout=True).count()
+# # print(cursor_count)
 #
-# cursor_count = col_author.find({"bsur":{"$exists":False}}, no_cursor_timeout=True).count()
+# cursor_count = col_author.count_documents({})
 # print(cursor_count)
-
-cursor_count = col_author.count_documents({})
-print(cursor_count)
 # for author in col_author.find({"sur":-1})[:5]:
 #     print(author)
 
@@ -160,3 +162,16 @@ print(cursor_count)
 #     P2 = stats.binom.sf(i - 1, 53631, 0.23)
 #     S = -math.log(P2)
 #     print(i,P2,S)
+
+
+# col_author = connectTable("qiuzh", "test1")
+# if col_author.find_one({"id":"100000002"}):
+#     print("yes")
+# if "a" !="b":
+#     print("yes")
+
+D = 732123
+L = 68284344
+
+P_d = D / L
+print(D, L, P_d)

@@ -183,6 +183,7 @@ def filter_authors_by_papers2_patch(begin, end, msg):
 
     print("线程： %s, 遍历了 %s" % (msg, len(opt)))
 
+
 def delete_new_pubs(begin, end, msg):
     """
     :param begin:

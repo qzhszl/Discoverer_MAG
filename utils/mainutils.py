@@ -3,12 +3,12 @@ from utils.connect_to_table import connectTable
 
 
 def create_index():
-    col2 = connectTable("qiuzh", "mag_researchers0707")
-    col2.create_index([('first_year', 1)])
-    # ('coauthor_id', 1)
+    col2 = connectTable("qiuzh", "be_discovered0810_testset")
+    col2.create_index([('be_discovered', 1)])
+    # # ('coauthor_id', 1)
 
-    # col2 = connectTable("qiuzh", "test")
-    # col2.create_index([('pubs.i', 1),("n_citation", 1)])
+    # col2 = connectTable("qiuzh", "mag_researchers0810")
+    # col2.create_index([('iftop', 1),("ifdis", 1)])
     # # a = col2.index_information()
     # print(a)
 

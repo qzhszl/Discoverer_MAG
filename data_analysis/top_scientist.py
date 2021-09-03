@@ -16,7 +16,12 @@ from utils.connect_to_table import connectTable
 
 
 def initialize_top_scientist():
-    col_author = connectTable("qiuzh", "mag_authors0510")
+    '''
+    this function is used in 2021.8.12 to process mag_researchers0810
+    this function is used in 2021.9.1 to process mag_researchers0810_trainingset
+    :return:
+    '''
+    col_author = connectTable("qiuzh", "researchers0810_trainingset")
 
     cursor = col_author.find(no_cursor_timeout=True)
     # researcher_number = cursor.count()
@@ -39,7 +44,7 @@ def initialize_top_scientist():
 
 
 def top_scientist(topx,begin,end,msg):
-    col_author = connectTable("qiuzh","mag_authors0510")
+    col_author = connectTable("qiuzh","researchers0810_trainingset")
     year_list = [1802, 1803, 1810, 1814, 1815, 1816, 1819, 1823, 1825, 1827, 1828, 1829, 1830, 1832, 1833, 1834, 1836, 1838,
                  1839, 1841, 1842, 1843, 1844, 1845, 1846, 1847, 1848, 1849, 1850, 1851, 1852, 1853, 1854, 1855, 1856, 1857,
                  1858, 1859, 1860, 1861, 1862, 1863, 1864, 1865, 1866, 1867, 1868, 1869, 1870, 1871, 1872, 1873, 1874, 1875,
@@ -74,7 +79,7 @@ def top_scientist(topx,begin,end,msg):
 
 
 def VERIFY_top_scientist():
-    col_author = connectTable("qiuzh","mag_authors0510")
+    col_author = connectTable("qiuzh","researchers0810_trainingset")
     year_list = [1802, 1803, 1810, 1814, 1815, 1816, 1819, 1823, 1825, 1827, 1828, 1829, 1830, 1832, 1833, 1834, 1836, 1838,
                  1839, 1841, 1842, 1843, 1844, 1845, 1846, 1847, 1848, 1849, 1850, 1851, 1852, 1853, 1854, 1855, 1856, 1857,
                  1858, 1859, 1860, 1861, 1862, 1863, 1864, 1865, 1866, 1867, 1868, 1869, 1870, 1871, 1872, 1873, 1874, 1875,
@@ -88,21 +93,18 @@ def VERIFY_top_scientist():
                  2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018]
     # year_list = [1957, 1987]
     for year in year_list:
-        cursor = col_author.find({"first_year": year}, no_cursor_timeout=True)
-        researcher_number = cursor.count()
+        researcher_number = col_author.count_documents({"first_year": year})
         print("理论值：", year, researcher_number,math.ceil(researcher_number * 0.1))
-        print("实际值：",col_author.find({"first_year": year,"iftop":1}, no_cursor_timeout=True).count())
-        cursor.close()
+        print("实际值：",col_author.count_documents({"first_year": year,"iftop":1}))
 
 
 if __name__ == '__main__':
     VERIFY_top_scientist()
 
     # initialize_top_scientist()
-
-    # # author_citation_count(1,5,1)
+    #
     # start = time()
-    # # top_scientist(0.1,0,2,1)
+    # top_scientist(0.1,0,2,1)
     #
     # p1 = multiprocessing.Process(target=top_scientist,
     #                              args=(0.1, 0, 60, 1))
